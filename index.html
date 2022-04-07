@@ -91,19 +91,20 @@
       }
 
       async function renderCardImages(orders) {
-        await renderAllQualities(
-          orders.result[0].sell.data.properties.image_url
-        );
-        // for (const order of orders.result) {
-        //   document.body.innerHTML = "";
-        //   await renderAllQualities(order.sell.data.properties.image_url);
-        //   document.body.innerHTML = "";
-        //   await renderAllQualities(order.sell.data.properties.image_url);
-        //   document.body.innerHTML = "";
-        //   await renderAllQualities(order.sell.data.properties.image_url);
-        //   document.body.innerHTML = "";
-        //   await renderAllQualities(order.sell.data.properties.image_url);
-        // }
+        // @NOTE: render just one set, for debugging purposes...
+        // await renderAllQualities(
+        //   orders.result[0].sell.data.properties.image_url
+        // );
+        for (const order of orders.result) {
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+        }
       }
     </script>
   </body>
