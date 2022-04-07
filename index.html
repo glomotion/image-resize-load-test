@@ -56,7 +56,7 @@
         });
       }
 
-      const LAMBDA_URL =
+      const IMAGE_RESIZER_SERVICE_URL =
         "https://7jbhvgob06.execute-api.us-east-2.amazonaws.com/default/imx-mp-image-resizer";
 
       function renderAllQualities(imageUrl) {
@@ -64,23 +64,23 @@
         const encodedImageUrl = encodeURIComponent(imageUrl);
         return Promise.all([
           createImg({
-            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
             width: 128,
           }),
           createImg({
-            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
             width: 256,
           }),
           createImg({
-            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
             width: 512,
           }),
           createImg({
-            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
             width: 720,
           }),
           createImg({
-            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
             width: 1024,
           }),
         ]);
