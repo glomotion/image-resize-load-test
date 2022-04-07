@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Imx platform image resizer load test</title>
+    <style>
+      body {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      img {
+        width: 200px;
+        min-height: 280px;
+        margin: 0 10px 10px 0;
+        background: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      function createImg({ src, alt, title, width }) {
+        return new Promise((res) => {
+          const onLoad = () => res();
+          const onError = (err) => {
+            console.error("############# awww snap!", err);
+            res();
+          };
+          const img = document.createElement("img");
+          img.src = `${src}&w=${width}`;
+          if (alt !== null) img.alt = alt;
+          if (title !== null) img.title = title;
+          img.addEventListener("load", onLoad);
+          img.addEventListener("error", onError);
+          document.body.append(img);
+        });
+      }
+      fetch("https://api.x.immutable.com/v1/orders?status=active")
+        .then((resp) => resp.json())
+        .then((orders) => renderCardImages(orders))
+        .catch((e) => console.error(e));
+
+      const LAMBDA_URL =
+        "https://7jbhvgob06.execute-api.us-east-2.amazonaws.com/default/imx-mp-image-resizer";
+
+      function renderAllQualities(imageUrl) {
+        console.log(`doing a batch of resizes for the image: ${imageUrl}`);
+        const encodedImageUrl = encodeURIComponent(imageUrl);
+        return Promise.all([
+          createImg({
+            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            width: 128,
+          }),
+          createImg({
+            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            width: 256,
+          }),
+          createImg({
+            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            width: 512,
+          }),
+          createImg({
+            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            width: 720,
+          }),
+        ]);
+      }
+
+      async function renderCardImages(orders) {
+        for (const order of orders.result) {
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+          document.body.innerHTML = "";
+          await renderAllQualities(order.sell.data.properties.image_url);
+        }
+      }
+    </script>
+  </body>
+</html>
