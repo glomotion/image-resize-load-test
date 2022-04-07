@@ -55,10 +55,6 @@
           document.body.append(container);
         });
       }
-      fetch("https://api.x.immutable.com/v1/orders?status=active")
-        .then((resp) => resp.json())
-        .then((orders) => renderCardImages(orders))
-        .catch((e) => console.error(e));
 
       const LAMBDA_URL =
         "https://7jbhvgob06.execute-api.us-east-2.amazonaws.com/default/imx-mp-image-resizer";
@@ -106,6 +102,13 @@
           await renderAllQualities(order.sell.data.properties.image_url);
         }
       }
+
+      // @NOTE: kick off the load testing, once we have the JSON for
+      // the latest orders back
+      fetch("https://api.x.immutable.com/v1/orders?status=active")
+        .then((resp) => resp.json())
+        .then((orders) => renderCardImages(orders))
+        .catch((e) => console.error(e));
     </script>
   </body>
 </html>
