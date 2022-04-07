@@ -7,11 +7,29 @@
         display: flex;
         flex-wrap: wrap;
       }
-      img {
+
+      .container {
         width: 200px;
         min-height: 280px;
         margin: 0 10px 10px 0;
+        padding-bottom: 15px;
         background: #f1f1f1;
+        position: relative;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+      }
+
+      .container::after {
+        content: attr(data-width);
+        position: absolute;
+        bottom: 5px;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        font-family: Arial, Helvetica, sans-serif;
       }
     </style>
   </head>
@@ -24,13 +42,17 @@
             console.error("############# awww snap!", err);
             res();
           };
+          const container = document.createElement("div");
+          container.classList.add("container");
+          container.setAttribute("data-width", `${width}px`);
           const img = document.createElement("img");
           img.src = `${src}&w=${width}`;
           if (alt !== null) img.alt = alt;
           if (title !== null) img.title = title;
           img.addEventListener("load", onLoad);
           img.addEventListener("error", onError);
-          document.body.append(img);
+          container.appendChild(img);
+          document.body.append(container);
         });
       }
       fetch("https://api.x.immutable.com/v1/orders?status=active")
@@ -61,20 +83,27 @@
             src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
             width: 720,
           }),
+          createImg({
+            src: `${LAMBDA_URL}?url=${encodedImageUrl}`,
+            width: 1024,
+          }),
         ]);
       }
 
       async function renderCardImages(orders) {
-        for (const order of orders.result) {
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
-        }
+        await renderAllQualities(
+          orders.result[0].sell.data.properties.image_url
+        );
+        // for (const order of orders.result) {
+        //   document.body.innerHTML = "";
+        //   await renderAllQualities(order.sell.data.properties.image_url);
+        //   document.body.innerHTML = "";
+        //   await renderAllQualities(order.sell.data.properties.image_url);
+        //   document.body.innerHTML = "";
+        //   await renderAllQualities(order.sell.data.properties.image_url);
+        //   document.body.innerHTML = "";
+        //   await renderAllQualities(order.sell.data.properties.image_url);
+        // }
       }
     </script>
   </body>
