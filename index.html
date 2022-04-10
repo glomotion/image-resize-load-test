@@ -9,8 +9,8 @@
       }
 
       .container {
-        width: 200px;
-        min-height: 280px;
+        width: 220px;
+        min-height: 220px;
         margin: 0 10px 10px 0;
         padding-bottom: 10px;
         background: #f1f1f1;
@@ -56,48 +56,44 @@
         });
       }
 
+      // const IMAGE_RESIZER_SERVICE_URL =
+      //   "https://7jbhvgob06.execute-api.us-east-2.amazonaws.com/default/imx-mp-image-resizer";
       const IMAGE_RESIZER_SERVICE_URL =
-        "https://7jbhvgob06.execute-api.us-east-2.amazonaws.com/default/imx-mp-image-resizer";
+        "https://image-cache.dev.immutable.com/";
 
       function renderAllQualities(imageUrl) {
         console.log(`doing a batch of resizes for the image: ${imageUrl}`);
-        const encodedImageUrl = encodeURIComponent(imageUrl);
+        const encodedImageUrl = btoa(imageUrl);
         return Promise.all([
           createImg({
-            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}url=${encodedImageUrl}`,
             width: 128,
           }),
           createImg({
-            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}url=${encodedImageUrl}`,
             width: 256,
           }),
           createImg({
-            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}url=${encodedImageUrl}`,
             width: 512,
           }),
           createImg({
-            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}url=${encodedImageUrl}`,
             width: 720,
           }),
           createImg({
-            src: `${IMAGE_RESIZER_SERVICE_URL}?url=${encodedImageUrl}`,
+            src: `${IMAGE_RESIZER_SERVICE_URL}url=${encodedImageUrl}`,
             width: 1024,
           }),
         ]);
       }
 
       async function renderCardImages(orders) {
-        // @NOTE: render just one set, for debugging purposes...
+        // // @NOTE: render just one set, for debugging purposes...
         // await renderAllQualities(
         //   orders.result[0].sell.data.properties.image_url
         // );
         for (const order of orders.result) {
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
-          document.body.innerHTML = "";
-          await renderAllQualities(order.sell.data.properties.image_url);
           document.body.innerHTML = "";
           await renderAllQualities(order.sell.data.properties.image_url);
         }
@@ -105,7 +101,14 @@
 
       // @NOTE: kick off the load testing, once we have the JSON for
       // the latest orders back
-      fetch("https://api.x.immutable.com/v1/orders?status=active")
+      fetch(
+        // top 100 (mostly GU)
+        // "https://api.x.immutable.com/v1/orders?status=active
+        // highrise creature club
+        // "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xb0e827c9ab5e68d243f707f832b756981987f704"
+        // book games
+        "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xac98d8d1bb27a94e79fbf49198210240688bb1ed"
+      )
         .then((resp) => resp.json())
         .then((orders) => renderCardImages(orders))
         .catch((e) => console.error(e));
