@@ -103,11 +103,13 @@
       // the latest orders back
       fetch(
         // top 100 (mostly GU)
-        "https://api.x.immutable.com/v1/orders?status=active"
+        // "https://api.x.immutable.com/v1/orders?status=active"
         // highrise creature club
         // "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xb0e827c9ab5e68d243f707f832b756981987f704"
         // book games
         // "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xac98d8d1bb27a94e79fbf49198210240688bb1ed"
+        // PlanetQuest collectables
+        "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xd17c47532860ed223910da50c64a8dc8f69ad18a"
       )
         .then((resp) => resp.json())
         .then((orders) => renderCardImages(orders))
