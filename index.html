@@ -12,7 +12,7 @@
         width: 220px;
         min-height: 220px;
         margin: 0 10px 10px 0;
-        padding-bottom: 10px;
+        padding-bottom: 30px;
         background: #f1f1f1;
         position: relative;
       }
@@ -30,6 +30,8 @@
       img {
         display: block;
         width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     </style>
   </head>
@@ -88,32 +90,31 @@
         ]);
       }
 
-      async function renderCardImages(orders) {
-        // // @NOTE: render just one set, for debugging purposes...
-        // await renderAllQualities(
-        //   orders.result[0].sell.data.properties.image_url
-        // );
+      async function renderCardImagesFromOrders(orders) {
         for (const order of orders.result) {
           document.body.innerHTML = "";
           await renderAllQualities(order.sell.data.properties.image_url);
         }
       }
 
-      // @NOTE: kick off the load testing, once we have the JSON for
-      // the latest orders back
-      fetch(
-        // top 100 (mostly GU)
-        // "https://api.x.immutable.com/v1/orders?status=active"
-        // highrise creature club
-        // "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xb0e827c9ab5e68d243f707f832b756981987f704"
-        // book games
-        // "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xac98d8d1bb27a94e79fbf49198210240688bb1ed"
-        // PlanetQuest collectables
-        "https://api.x.immutable.com/v1/orders?status=active&sell_token_address=0xd17c47532860ed223910da50c64a8dc8f69ad18a"
-      )
-        .then((resp) => resp.json())
-        .then((orders) => renderCardImages(orders))
-        .catch((e) => console.error(e));
+      async function loadCollectionOrders(collectionId) {
+        const response = await fetch(
+          `https://api.x.immutable.com/v1/orders?status=active&sell_token_address=${collectionId}`
+        );
+        const json = await response.json();
+        await renderCardImagesFromOrders(json);
+      }
+
+      fetch("https://api.x.immutable.com/v1/collections")
+        .then((data) => data.json())
+        .then(async (response) => {
+          const collections = response.result;
+
+          for (collection of collections) {
+            console.log(`batch processing collection: ${collection.name}`);
+            await loadCollectionOrders(collection.address);
+          }
+        });
     </script>
   </body>
 </html>
